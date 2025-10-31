@@ -14,6 +14,8 @@
 
 volatile unsigned long ms_value=0;
 volatile unsigned long seconds=0; 
+
+
 void initialize_timer()
 {
     // Enable RTC Oscillator -> this effectively does OSCCONbits.LPOSCEN = 1
@@ -71,7 +73,7 @@ void timer_loop()
 {
     lcd_printf("Lab02: Int & Timer");
     lcd_locate(0, 1);
-    lcd_printf("Group:7, Aylin, Lavinda, Ahmet");
+    lcd_printf("Group:7");
 
     unsigned int iteration = 0;
     int i;
@@ -79,19 +81,14 @@ void timer_loop()
     while (TRUE)
     {
         iteration++;
+        unsigned long total_ms = seconds * 1000 + ms_value;
+        lcd_locate(0, 5);
+        lcd_printf("Time: %2lu:%2lu:%3lu",total_ms / 60000,(total_ms / 1000) % 60,total_ms % 1000);
 
         if (iteration % 2000 == 0)
         {
             // Toggle LED3 via XOR
             LATA ^= (1 << LED3);
-
-            unsigned long total_ms = seconds * 1000 + ms_value;
-            lcd_locate(0, 2);
-            lcd_printf("Time: %2lu:%2lu:%3lu",
-                       total_ms / 60000,
-                       (total_ms / 1000) % 60,
-                       total_ms % 1000);
-
             // Measure 2000 empty iterations using Timer3
             TMR3 = 0x00;
             SETBIT(T3CONbits.TON);
@@ -105,8 +102,8 @@ void timer_loop()
             unsigned int cycles = TMR3;
             double ms_duration = (double)cycles / (FCY / 1000.0);
 
-            lcd_locate(0, 3);
-            lcd_printf("T3:%u cyc %.4f ms", cycles, ms_duration);
+            lcd_locate(0, 6);
+            lcd_printf("cyle:%u and %.4f ms", cycles, ms_duration);
         }
     }
 }
